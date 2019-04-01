@@ -67,7 +67,7 @@ const map = new Map({
 
 ---
 
-## Basemaps and Ground - Org based
+## Basemaps and Ground - Portal driven
 
 ```js
   const portal = new Portal();
@@ -333,6 +333,14 @@ signal.abort();
 ---
 
 ## Patterns
+
+---
+
+## outFields
+
+- Can be thought of as _additional fields_
+- We determine what fields are needed for rendering, labels, and elevation in 3D
+- Additional Popup fields requested as needed
 
 ---
 
