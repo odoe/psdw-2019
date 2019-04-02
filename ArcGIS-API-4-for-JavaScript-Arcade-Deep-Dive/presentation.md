@@ -520,4 +520,132 @@ const map = new WebMap({
 
 ---
 
+## Why Arcade?
+
+- Client-side calculation
+  - Frequently updated datasets/layers
+  - Calculate data from layers you don't own
+- It persists across the platform
+  - Secure
+  - Runs on all supported devices/apps
+- Lightweight
+- Geospatial functions are first class members
+
+---
+
+## Normalization for rendering
+
+```js
+const renderer = {
+  type: "simple", // autocasts as new SimpleRenderer()
+  symbol: defaultSym,
+  label: "U.S. County",
+  visualVariables: [{
+    type: "color",
+    valueExpression: "($feature.POP_POVERTY / $feature.TOTPOP_CY ) * 100",
+    legendOptions: {
+      title: "% population in poverty by county"
+    },
+    stops: [
+      { value: 10, color: "#FFFCD4" },
+      { value: 30, color: "#350242" }
+    ]
+  }]
+};
+```
+
+---
+
+## Normalization for rendering
+
+<iframe height='500' scrolling='no' title='Data-driven color' src='//codepen.io/kekenes/embed/preview/eopYPa/?height=500&theme-id=31222&default-tab=html,result&embed-version=2' frameborder='no' allowtransparency='true' allowfullscreen='true' style='width: 100%;'>See the Pen <a href='https://codepen.io/kekenes/pen/eopYPa/'>Data-driven color</a> by Kristian Ekenes (<a href='https://codepen.io/kekenes'>@kekenes</a>) on <a href='https://codepen.io'>CodePen</a>.
+</iframe>
+
+---
+
+## Arcade in script
+
+```html
+<script type="text/arcgis-arcade" id="wind-direction">
+  var DEG = $feature.WIND_DIRECT;
+  var SPEED = $feature.WIND_SPEED;
+  var DIR = When( SPEED == 0, "",
+    (DEG < 22.5 && DEG >= 0) || DEG > 337.5, "N",
+    DEG >= 22.5 && DEG < 67.5, "NE",
+    DEG >= 67.5 && DEG < 112.5, "E",
+    DEG >= 112.5 && DEG < 157.5, "SE",
+    DEG >= 157.5 && DEG < 202.5, "S",
+    DEG >= 202.5 && DEG < 247.5, "SW",
+    DEG >= 247.5 && DEG < 292.5, "W",
+    DEG >= 292.5 && DEG < 337.5, "NW", "" );
+  return SPEED + " mph " + DIR;
+</script>
+```
+
+```js
+const windArcade = document.getElementById("wind-direction").text;
+
+const windClass = {
+  labelExpressionInfo: {
+    expression: windArcade
+  },
+  labelPlacement: "above-right",
+  symbol: createTextSymbol("#3ba53f")
+};
+```
+
+---
+
+## Arcade in script
+
+[![Search View Model](images/arcade-weather.png)](https://developers.arcgis.com/javascript/latest/sample-code/labels-multiline/index.html)
+
+---
+
+90% of the time, you'll author Arcade expressions in the ArcGIS Online Arcade editor...
+
+---
+
+![Arcade editor](images/arcade-editor.png)
+
+---
+
+## Generating Arcade in behalf of your users
+
+```js
+function generateArcade(fields: string[], normalizationField?: string): string {
+  const value = fields.map( field => `$feature.${field}` ).reduce( (a,c) => `${a} + ${c}`);
+  const percentValue = normalizationField ? `( ( ${value} ) / $feature.${normalizationField} ) * 100` : value;
+  return `Round( ${percentValue} )`;
+}
+```
+
+[![arcade-generate](images/arcade-generate.png)](https://ekenes.github.io/conferences/ds-2019/arcade/demos/generate-arcade/)
+
+---
+
+## Generating Arcade in behalf of your users
+
+[![Smart Mapping flow](images/smart-mapping-flow.png)](https://www.esri.com/arcgis-blog/products/js-api-arcgis/mapping/generating-arcade-expressions-what-smart-mapping-does-for-you/)
+
+---
+
+- [Relationship](https://www.esri.com/arcgis-blog/products/js-api-arcgis/mapping/smart-mapping-with-arcade-exploring-relationships/)
+- [Predominance](https://www.esri.com/arcgis-blog/products/js-api-arcgis/mapping/smart-mapping-with-arcade-visualizing-predominance/)
+- [Age](https://www.esri.com/arcgis-blog/products/js-api-arcgis/mapping/smart-mapping-with-arcade-exploring-age/)
+
+---
+
+## Generate Arcade for popups
+
+[![arcade-popups](images/arcade-popups)](https://ekenes.github.io/esri-ts-samples/visualization/smart-mapping/predominance/popup-template/?id=e1f194d5f3184402a8a39b60b44693f4)
+
+---
+
+## Expression Sharing
+
+https://github.com/Esri/arcade-expressions/
+
+---
+
 <!-- .slide: class="end" -->
