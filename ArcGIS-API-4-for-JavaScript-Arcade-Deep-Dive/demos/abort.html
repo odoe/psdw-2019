@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>Abort Controller</title>
+    <style>
+      html,
+      body {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      #viewDiv {
+        padding: 1em;
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      #btn {
+        width: 250px;
+        margin: 1em;
+      }
+
+    </style>
+    <link rel="stylesheet" href="https://s3-us-west-1.amazonaws.com/patterns.esri.com/files/calcite-web/1.2.5/css/calcite-web.min.css">
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.11/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.11/"></script>
+  </head>
+
+  <body>
+    <div><label><input id="checkbox" type="checkbox"/>Abort request</label></div>
+    <button class="btn btn-large" id="btn">Do Request</button>
+    <div id="viewDiv"></div>
+    <script>
+      require(["esri/request"], function(esriRequest) {
+        const node = document.getElementById("viewDiv");
+        const btn = document.getElementById("btn");
+        const checkbox = document.getElementById("checkbox");
+
+        function logger(message) {
+          if (typeof message == "object") {
+            node.innerHTML += JSON.stringify(message) + "<br /><hr />";
+          } else {
+            node.innerHTML += message + "<br />";
+          }
+        }
+        const url =
+          "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson";
+
+        btn.addEventListener("click", () => {
+          const controller = new AbortController();
+          const signal = controller.signal;
+
+          logger("Start request");
+          esriRequest(url, { signal })
+            .then(response => {
+              // The request went OK
+              logger("Response ok");
+            })
+            .catch(err => {
+              if (err.name === "AbortError") {
+                logger("Request aborted");
+              } else {
+                logger(err);
+              }
+            });
+          // Abort requests that are aware of the controller's signal
+          if (checkbox.checked) {
+            logger("Abort the request");
+            controller.abort();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>Tooltip</title>
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      #tooltip {
+        overflow: auto;
+        z-index: 99;
+        position: absolute;
+        padding: 10px;
+        border-radius: 15px;
+        background-color: rgba(0, 94, 148, 0.80);
+        color: #fff;
+        width: 250px; 
+        height: 200px;
+        -webkit-backdrop-filter: blur(5px);
+        backdrop-filter: blur(5px);
+      }
+
+    </style>
+
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.11/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.11/"></script>
+
+    <script>
+require([
+  "esri/Map",
+  "esri/views/MapView",
+  "esri/layers/FeatureLayer",
+  "esri/widgets/Feature",
+  "esri/core/watchUtils"
+], function(ArcGISMap, MapView, FeatureLayer, Feature, watchUtils) {
+  const tooltip = document.getElementById("tooltip");
+
+  const layer = new FeatureLayer({
+    portalItem: {
+      id: "848d61af726f40d890219042253bedd7"
+    },
+    outFields: ["*"],
+    popupEnabled: false
+  });
+
+  const map = new ArcGISMap({
+    layers: [layer],
+    basemap: "dark-gray-vector"
+  });
+  const view = new MapView({
+    container: "viewDiv",
+    map: map,
+    center: [-117, 40.702],
+    zoom: 4
+  });
+
+  const featureWidget = new Feature({ view, container: tooltip });
+  
+  let layerView;
+  let highlight;
+  
+  view.whenLayerView(layer).then(result => layerView = result);
+
+  view.on("pointer-move", event => {
+    const { x, y } = event;
+    view.hitTest(event).then(({ results }) => {
+      if (highlight) {
+        highlight.remove();
+      }
+      if (results.length) {
+        tooltip.style.display = "block";
+        tooltip.style.top = `${y - 225}px`;
+        tooltip.style.left = `${x - 125}px`;
+        // top most layer is out points
+        const g = results[0].graphic;
+        if (g.geometry && g.geometry.type === "point") {
+          const oid = g.attributes.OBJECTID;
+          featureWidget.graphic = g;
+          if (layerView) {
+            highlight = layerView.highlight(oid);
+          }
+        } else {
+          tooltip.style.display = "none";
+        }
+      } else {
+        tooltip.style.display = "none";
+      }
+    });
+  });
+});
+
+    </script>
+  </head>
+
+  <body>
+    <div id="viewDiv"></div>
+  </body>
+</html>

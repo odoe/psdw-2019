@@ -99,7 +99,7 @@ const map = new Map({
 
 ## Widgets - Feature as a tooltip
 
-<iframe height="500" style="width: 100%;" scrolling="no" title="FeatureView - Tooltip" src="//codepen.io/odoe/embed/preview/eoOvPj/?height=500&theme-id=31222&default-tab=js,result" frameborder="no" allowtransparency="true" allowfullscreen="true">
+<iframe height="500" style="width: 100%;" scrolling="no" title="FeatureView - Tooltip" src="//codepen.io/odoe/embed/preview/eoOvPj/?height=500&theme-id=31222&default-tab=js,result&editable=true" frameborder="no" allowtransparency="true" allowfullscreen="true">
   See the Pen <a href='https://codepen.io/odoe/pen/eoOvPj/'>FeatureView - Tooltip</a> by Rene Rubalcava
   (<a href='https://codepen.io/odoe'>@odoe</a>) on <a href='https://codepen.io'>CodePen</a>.
 </iframe>
@@ -291,9 +291,9 @@ view.when(() => {
 const init = async (doSomethingWithFeatures) => {
   await view.when();
   const layerView = await view.whenLayerView(map.findLayerById("awesomeLayer"));
-  const { target as layerView } = await watchUtils.whenFalseOnce(layerView, "updating");
-  const features = await layerView.queryFeatures();
-  doSomethingWithFeatures(features);
+  await watchUtils.whenFalseOnce(layerView, "updating");
+  const featureSet = await layerView.queryFeatures();
+  doSomethingWithFeatures(featureSet);
 };
 
 try {
@@ -344,54 +344,9 @@ signal.abort();
 
 ---
 
-## Interactivity with view events
-
-- Use view events to interact with the view
-- [List of events](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-MapView.html#events-summary)
-- You can stop the propagation of the event to prevent the default behavior
-
-```js
-view.on("drag", event => {
-  // user won't be able to drag
-  event.stopPropagation();
-})
-```
-
----
-
-
-## Interactivity with view events
-
-- Access the features on click
-
-```js
-view.on("click", ({ x, y }) => {
-  const screenPoint = {x, y};
-  view.hitTest(screenPoint)
-    .then(response => {
-       // do something with the result graphic
-       const graphic = response.results[0].graphic;
-    });
-});
-```
-- [API Sample](https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=view-hittest)
-
----
-
-
-## goTo() with View
-
-- Sets the view to a given target.
-  - Navigate to a geometry/feature/location
-- [API Sample](https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=scene-goto)
-
----
-
 ## Loadables
 
 - brings better control, and scheduling of loading resources.
-- extension of `esri/core/Promise`
-- in 3.x, instanciating a layer loads it. in 4.0, it's an explicit call
 - the views automatically loads the map and its layers
 
 ---
@@ -548,6 +503,15 @@ const map = new WebMap({
 ## LayerViews
 
 <iframe height='500' scrolling='no' title='LayerView - Ready' src='//codepen.io/odoe/embed/preview/YvRJgj/?height=500&theme-id=31222&default-tab=js,result&embed-version=2' frameborder='no' allowtransparency='true' allowfullscreen='true' style='width: 100%;'>See the Pen <a href='https://codepen.io/odoe/pen/YvRJgj/'>LayerView - Ready</a> by Rene Rubalcava (<a href='https://codepen.io/odoe'>@odoe</a>) on <a href='https://codepen.io'>CodePen</a>.
+</iframe>
+
+---
+
+## Filter and Effect
+
+<iframe height="500" style="width: 100%;" scrolling="no" title="FilterEffects" src="//codepen.io/odoe/embed/preview/GeoKLB/?height=500&theme-id=31222&default-tab=html,result&editable=true" frameborder="no" allowtransparency="true" allowfullscreen="true">
+  See the Pen <a href='https://codepen.io/odoe/pen/GeoKLB/'>FilterEffects</a> by Rene Rubalcava
+  (<a href='https://codepen.io/odoe'>@odoe</a>) on <a href='https://codepen.io'>CodePen</a>.
 </iframe>
 
 ---
