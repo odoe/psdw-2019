@@ -136,90 +136,6 @@ portal.helperServices.geocode.map(geocoderService => {
 
 ---
 
-## Working with Accessor
-
-- Objects are have properties that can be:
-  - read and set
-  - or read-only
-  - constructor arguments
-  - watchable
-
----
-
-### Accessor - property access
-
-```ts
-layer.opacity = 0.5;
-layer.title = "My test layer";
-
-// setting multiple values
-layer.set({
-  opacity: 0.5,
-  title: "My test layer"
-});
-
-// accessing the value of a deep property
-view.get("map.basemap.title");
-view.set("map.basemap.title", "new title");
-```
-
----
-
-### Accessor - property watching
-
-```ts
-mapView.watch("scale", (newValue, oldValue, property, target) => {
-  console.log(`scale changed: ${newValue}`);
-});
-
-
-mapView.watch("map.basemap.title", (newValue, oldValue, property, target) => {
-  console.log(`new basemap title: ${newValue}`);
-});
-
-
-mapView.watch("ready, stationary", (newValue, oldValue, property, target) => {
-  console.log(`property ${property}: ${newValue}`);
-});
-
-watchUtils.whenTrue(view, "stationary", () => {
-  console.log("view is stationary");
-})
-```
-
-[watchUtils](https://developers.arcgis.com/javascript/latest/api-reference/esri-core-watchUtils.html)
-
----
-
-## Promises
-
----
-
-## Promises
-
-- All asynchronous methods return a promise, no more [events](https://developers.arcgis.com/javascript/jsapi/querytask-amd.html#events)
-- The basic pattern looks like this:
-
-```js
-layer.queryFeatures(query).then(handleResult).catch(handleError);
-```
-
----
-
-## Promises with async/await
-
-- work with native promises
-
-```js
-const doQuery = async (query) => {
-  const results = await layer.queryFeatures(query);
-  const transformedResults = results.map(transformData);
-  return transformedResults;
-}
-```
-
----
-
 ## Promises
 
 - Load resources
@@ -560,6 +476,15 @@ setInterval(() => {
 ```
 
 - [demo app](https://arcgis-jsapi-sw.surge.sh/) | [edit app](https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=editing-applyedits)
+
+---
+
+## Frameworks
+
+- Modularize the API usage
+- Use [plugin](https://github.com/esri/arcgis-webpack-plugin) or [esri-loader](https://github.com/Esri/esri-loader)
+- [React w/plugin](https://github.com/odoe/jsapi-react-template) | [Dojo w/esri-loader](https://github.com/odoe/dojo-esri-loader)
+- Or you can use the [CLI](https://github.com/esri/arcgis-js-cli)
 
 ---
 
