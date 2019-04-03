@@ -513,9 +513,10 @@ layerView.queryFeatures(query);
 - Client-side calculation
   - Frequently updated datasets/layers
   - Calculate data from layers you don't own
-- It persists across the platform
+  - Algorithms not well defined
+- Persists across the platform
   - Secure
-  - Runs on all supported devices/apps
+  - Runs on all supported devices/apps (desktop/mobile/web)
 - Lightweight
 - Geospatial functions are first class members
 
