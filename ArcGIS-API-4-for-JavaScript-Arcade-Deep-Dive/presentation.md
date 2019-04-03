@@ -501,6 +501,64 @@ layerView.queryFeatures(query);
 
 - Used for controlling cache capabilities when building a PWA
 - Also useful for notifications
+
+```js
+// register the service worker
+navigator.serviceWorker.register('./../sw.js')
+.then(swReg => {
+  console.log('Service Worker is registered', swReg);
+  swRegistration = swReg;
+  requestNotificationPermission();
+})
+.catch(error => {
+  console.error('Service Worker Error', error);
+});
+```
+
+---
+
+## Service Workers
+
+- Show Notification
+
+```js
+const showNotification = (message) => {
+  if (!swRegistration) {
+    return;
+  }
+  const options = {
+    body: message
+  };
+  swRegistration.showNotification("Map info", options)
+};
+```
+
+---
+
+## Service Workers
+
+```js
+setInterval(() => {
+  featureLayer.queryFeatureCount().then(featureCount => {
+    if (count !== featureCount) {
+      if (count < featureCount) {
+        const diff = featureCount - count;
+        const plural = diff > 1 ? "features" : "feature";
+        showNotification(`${diff} ${plural} added`);
+      }
+      else {
+        const diff = count - featureCount;
+        const plural = diff > 1 ? "features" : "feature";
+        showNotification(`${diff} ${plural} removed`);
+      }
+      count = featureCount;
+      featureLayer.refresh();
+    }
+  })
+  .catch(error => console.warn(error))
+}, 10000);
+```
+
 - [demo app](https://arcgis-jsapi-sw.surge.sh/) | [edit app](https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=editing-applyedits)
 
 ---
