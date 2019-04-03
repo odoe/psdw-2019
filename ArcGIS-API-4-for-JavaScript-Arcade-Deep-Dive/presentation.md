@@ -628,7 +628,7 @@ function generateArcade(fields: string[], normalizationField?: string): string {
 
 ## Generate Arcade for popups
 
-[![arcade-popups](images/arcade-popups)](https://ekenes.github.io/esri-ts-samples/visualization/smart-mapping/predominance/popup-template/?id=e1f194d5f3184402a8a39b60b44693f4)
+[![arcade-popups](images/arcade-popups.png)](https://ekenes.github.io/esri-ts-samples/visualization/smart-mapping/predominance/popup-template/?id=e1f194d5f3184402a8a39b60b44693f4)
 
 ---
 
