@@ -4,6 +4,7 @@
 <h1 style="text-align: right; font-size: 80px;">and Arcade</h1>
 <h2 style="text-align: right; font-size: 40px;">Deep Dive</h2>
 <p style="text-align: right; font-size: 30px;">René Rubalcava | Kristian Ekenes</p>
+<p style="text-align: right; font-size: 30px;">slides: <a href="https://git.io/fjIQv"><code>https://git.io/fjIQv</code></a></p>
 
 ---
 
