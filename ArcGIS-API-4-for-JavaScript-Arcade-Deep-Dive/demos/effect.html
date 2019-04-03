@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>Filter</title>
+    <style>
+      html,
+      body {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
+
+    </style>
+    <link rel="stylesheet" href="https://s3-us-west-1.amazonaws.com/patterns.esri.com/files/calcite-web/1.2.5/css/calcite-web.min.css">
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.11/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.11/"></script>
+  </head>
+
+  <body>
+    <nav id="nav">
+      <button class="btn btn-grouped">Gap</button>
+      <button class="btn btn-grouped">Pass</button>
+      <button class="btn btn-grouped">Notch</button>
+      <button class="btn btn-grouped">Saddle</button>
+    </nav>
+    <div id="viewDiv"></div>
+    <script>
+      require([
+        "esri/WebMap",
+        "esri/views/MapView",
+        "esri/widgets/Legend",
+        "esri/core/watchUtils"
+      ], function(WebMap, MapView, Legend, watchUtils) {
+
+        const buttons = Array.from(document.querySelectorAll(".btn-grouped"));
+
+        const map = new WebMap({
+          portalItem: {
+            id: "5c7bffd977d34ed0a4e8d60f9b6a5b91"
+          }
+        });
+
+        map.load().then(() => {
+          map.allLayers.forEach(lyr => {
+            if (lyr.type === "tile") {
+              lyr.visible = false;
+            }
+            if (lyr.type === "feature") {
+              lyr.minScale = 0;
+            }
+          });
+
+          const view = new MapView({
+            container: "viewDiv",
+            map: map
+          });
+          const legend = new Legend({view});
+          
+          view.ui.add(legend, "bottom-left");
+          view.ui.add("nav", "top-right");
+          const layer = map.layers.getItemAt(1);
+          
+          view.whenLayerView(layer).then(layerView => {
+            watchUtils.whenFalseOnce(layerView, "updating", () => {
+              buttons.forEach(button => {
+                button.addEventListener("click", ({ target }) => {
+                  const type = target.innerText;
+                  layerView.effect = {
+                    filter: {
+                      where: `NAME like '%${type}%'`
+                    },
+                    excludedEffect: "grayscale(100%) opacity(30%)"
+                  };
+                });
+              });
+            });
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

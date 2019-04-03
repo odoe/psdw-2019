@@ -90,31 +90,6 @@ const map = new Map({
 
 ---
 
-## Widgets - Feature
- - Display popup template content
- - [Hover](https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=widgets-feature)
-<aside class="notes">Display popup content someplace else</aside>
-
----
-
-## Widgets - Feature as a tooltip
-
-<iframe height="500" style="width: 100%;" scrolling="no" title="FeatureView - Tooltip" src="//codepen.io/odoe/embed/preview/eoOvPj/?height=500&theme-id=31222&default-tab=js,result&editable=true" frameborder="no" allowtransparency="true" allowfullscreen="true">
-  See the Pen <a href='https://codepen.io/odoe/pen/eoOvPj/'>FeatureView - Tooltip</a> by Rene Rubalcava
-  (<a href='https://codepen.io/odoe'>@odoe</a>) on <a href='https://codepen.io'>CodePen</a>.
-</iframe>
-
----
-
-## Widgets - Architecture
-
- View + View Model
- ![Search View Model](images/searchviewmodel.png)
-
-<aside class="notes"> Separate business logic and presentation. Link to doc  </aside>
-
----
-
 ## View Models
 
  - [Custom View](https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=widgets-frameworks-react)
@@ -249,19 +224,6 @@ const doQuery = async (query) => {
 - Load resources
 - Asychronously initialized `Layer`, `WebMap`, `WebScene`, `View`
 
-```js
-const map = new Map({...})
-
-view = new SceneView({
-  map: map,
-  //...
-});
-
-view.when(() => {
-  // the view is ready to go
-});
-```
-
 ---
 
 ## Promises
@@ -323,7 +285,7 @@ signal.abort();
 
 ---
 
-## Abort Signal
+## [Abort Signal](./demos/abort.html)
 
 <iframe height="500" style="width: 100%;" scrolling="no" title="Abort Controller" src="//codepen.io/odoe/embed/preview/eoYeBY/?height=500&theme-id=31222&default-tab=js,result" frameborder="no" allowtransparency="true" allowfullscreen="true">
   See the Pen <a href='https://codepen.io/odoe/pen/eoYeBY/'>Abort Controller</a> by Rene Rubalcava
@@ -341,6 +303,25 @@ signal.abort();
 - Can be thought of as _additional fields_
 - We determine what fields are needed for rendering, labels, and elevation in 3D
 - Additional Popup fields requested as needed
+
+---
+
+## outFields - Feature as a [tooltip](./demos/tooltip.html)
+
+<iframe height="500" style="width: 100%;" scrolling="no" title="FeatureView - Tooltip" src="//codepen.io/odoe/embed/preview/eoOvPj/?height=500&theme-id=31222&default-tab=js,result&editable=true" frameborder="no" allowtransparency="true" allowfullscreen="true">
+  See the Pen <a href='https://codepen.io/odoe/pen/eoOvPj/'>FeatureView - Tooltip</a> by Rene Rubalcava
+  (<a href='https://codepen.io/odoe'>@odoe</a>) on <a href='https://codepen.io'>CodePen</a>.
+</iframe>
+
+---
+
+## Widgets - Architecture
+
+ View + View Model
+ ![Search View Model](images/searchviewmodel.png)
+
+<aside class="notes"> Separate business logic and presentation. Link to doc  </aside>
+
 
 ---
 
@@ -423,24 +404,22 @@ const view = new MapView({
 
 ---
 
-## WebMap is still a Map
+## GeoJSONLayer
 
 ```js
-const map = new WebMap({
-  basemap: { ... },
-  layers: [ ... ]
+const layer = new GeoJSONLayer({
+  url: "https://raw.githubusercontent.com/ebrelsford/geojson-examples/master/nyc_council_districts.geojson",
+  renderer: renderer,
+  popupTemplate: popupTemplate
 });
+
+// fully editable
+layer.applyEdits({ addFeatures, updateFeatures, deleteFeatures });
+// queryable with statistics
+cosnt query = layer.createQuery();
+query.set({ where, outStatistics });
+layerView.queryFeatures(query);
 ```
-
-- Still acts like a regular `Map`
-- Has some advantages
-
----
-
-## WebMap is still a Map
-
-<iframe height='500' scrolling='no' title='Local bookmarks' src='//codepen.io/odoe/embed/preview/QxrEVX/?height=500&theme-id=31222&default-tab=js,result&embed-version=2' frameborder='no' allowtransparency='true' allowfullscreen='true' style='width: 100%;'>See the Pen <a href='https://codepen.io/odoe/pen/QxrEVX/'>Local bookmarks</a> by Rene Rubalcava (<a href='https://codepen.io/odoe'>@odoe</a>) on <a href='https://codepen.io'>CodePen</a>.
-</iframe>
 
 ---
 
@@ -490,20 +469,21 @@ const map = new WebMap({
 
 ---
 
-## LayerViews
+## FeatureFilter
 
-- Renders the Layer
-- When is it done though?
-  - _hotly debated topic!_
-  - When can you actually use it!!
-  - Behavior different with optimized FeatureLayer
+- Similar to definitionExpression, but on LayerView
+- Works with geomtries and attribute filters
+- Can define [spatial relationships](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-support-FeatureFilter.html#spatialRelationship)
+- [demo](./demos/filter.html)
 
 ---
 
-## LayerViews
+## FeatureEffect
 
-<iframe height='500' scrolling='no' title='LayerView - Ready' src='//codepen.io/odoe/embed/preview/YvRJgj/?height=500&theme-id=31222&default-tab=js,result&embed-version=2' frameborder='no' allowtransparency='true' allowfullscreen='true' style='width: 100%;'>See the Pen <a href='https://codepen.io/odoe/pen/YvRJgj/'>LayerView - Ready</a> by Rene Rubalcava (<a href='https://codepen.io/odoe'>@odoe</a>) on <a href='https://codepen.io'>CodePen</a>.
-</iframe>
+- For emphasizing/deemphasizing results of a filter
+- Uses [CSS Filters](https://developer.mozilla.org/en-US/docs/Web/CSS/filter)
+- `includedEffect` and/or `excludedEffect`
+- [demo](./demos/effect.html)
 
 ---
 
@@ -513,6 +493,14 @@ const map = new WebMap({
   See the Pen <a href='https://codepen.io/odoe/pen/GeoKLB/'>FilterEffects</a> by Rene Rubalcava
   (<a href='https://codepen.io/odoe'>@odoe</a>) on <a href='https://codepen.io'>CodePen</a>.
 </iframe>
+
+---
+
+## Service Workers
+
+- Used for controlling cache capabilities when building a PWA
+- Also useful for notifications
+- [demo app](https://arcgis-jsapi-sw.surge.sh/) | [edit app](https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=editing-applyedits)
 
 ---
 
